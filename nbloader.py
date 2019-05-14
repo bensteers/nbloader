@@ -5,11 +5,17 @@ import mistune
 from nbformat import reader, converter, current_nbformat
 from IPython.core.interactiveshell import InteractiveShell
 from IPython import get_ipython
-from IPython.core.compilerop import CachingCompiler
 
 
 def new_interactive_shell(user_ns=None):
     # TODO: I still haven't figured out how to get this to properly work with matplotlib inline
+
+    # See: https://github.com/ipython/ipykernel/blob/fe52dbd726cb405eb3a1e74e6a7fdb32372150ed/ipykernel/ipkernel.py#L63
+    # See: https://github.com/ipython/ipython/blob/23e025315441869b3a62bd6652703780aecfefdb/IPython/core/interactiveshell.py#L1290
+    # output capturing: https://github.com/jupyter-widgets/ipywidgets/blob/36fe37594cd5a268def228709ca27e37b99ac606/ipywidgets/widgets/widget_output.py#L107
+    # loading notebooks as modules: https://github.com/jupyter/notebook/blob/b8b66332e2023e83d2ee04f83d8814f567e01a4e/docs/source/examples/Notebook/Importing%20Notebooks.ipynb
+
+
     # ip = get_ipython()
     # shell = ip.__class__(parent=ip.parent,
     #     profile_dir=ip.profile_dir,
@@ -83,7 +89,6 @@ class Notebook(object):
         # convert to current notebook version
         notebook = converter.convert(notebook, current_nbformat)
 
-        compiler = CachingCompiler()
         for i, cell in enumerate(notebook.cells):
             if cell.cell_type == 'markdown' and self.tag_md:
                 # tokenize markdown block
